@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  web:
+    build: ./
+    command: php -S 0.0.0.0:80 -t /var/www/public
+    ports:
+      - 8080:80
+    volumes:
+      - ./:/var/www/public
+    working_dir: /var/www/public

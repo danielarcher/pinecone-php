@@ -1,0 +1,25 @@
+{
+    "name": "darcher/pinecone-php",
+    "description": "Pinecode API Client in PHP",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Darcher\\PineconePhp\\": "src/",
+            "Darcher\\PineconePhp\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Archer",
+            "email": "contato@danielcramer.com.br"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.5",
+        "nyholm/psr7": "^1.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.1"
+    }
+}
