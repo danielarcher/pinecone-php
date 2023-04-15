@@ -1,83 +1,108 @@
-# PHP Pinecode API Client
+# PHP Pinecone API Client
 
-This PHP Pinecode API Client is a powerful and easy-to-use library that allows you to interact with the Pinecode vector database. Pinecode is a scalable and high-performance vector database designed to store, search, and manage large volumes of high-dimensional vectors. 
+This PHP Pinecone API Client is a powerful and easy-to-use library that allows you to interact with the Pinecone vector database. Pinecone is a scalable and high-performance vector database designed to store, search, and manage large volumes of high-dimensional vectors. 
 
-This library offers a convenient and efficient way to interact with Pinecode using PHP.
-
-## Features
-- Easy-to-use interface for interacting with Pinecode API
-- Perform CRUD operations on vectors and collections
-- Supports batch operations for improved efficiency
-- Pagination and filtering support for search queries
-- Well-documented and structured code
-- Comprehensive error handling and logging
-
-## Installation
-
-To install the PHP Pinecode API Client, simply run the following command:
-
-```shell
-composer require danielarcher/pinecode-php
-```
-
-This will add the library to your project's dependencies and make it available for use.
+This library offers a convenient and efficient way to interact with Pinecone using PHP.
 
 ## Getting Started
-To get started, you will need to create a new instance of the PinecodeClient class and provide your Pinecode API key:
+### Prerequisites
+To use this package, you will need to have PHP 8.1 or higher installed on your machine. You will also need to have a Pinecone account and an API key.
+
+### Installation
+To install the package, you can use composer:
+
+```bash
+composer require darcher/pinecone-php
+```
+# Usage
+
+## Index
+To get started, you will need to create an instance of the IndexApi class:
 
 ```php
-require_once 'vendor/autoload.php';
-
-use Danielarcher\PinecodeApiClient\PinecodeClient;
+use Darcher\PineconePhp\IndexApi;
 
 $apiKey = 'your-api-key';
-$pinecodeClient = new PinecodeClient($apiKey);
-```
-Now you can start interacting with the Pinecode API using the methods provided by the PinecodeClient class.
+$environment = 'us-west1-gcp';
 
-# Examples
-Create a collection
-```php
-$collectionName = 'example_collection';
-$dimensions = 128;
-
-$response = $pinecodeClient->createCollection($collectionName, $dimensions);
+$pinecone = IndexApi::build($apiKey, $environment);
 ```
-Insert a vector
-```php
-$vectorId = 'example_vector';
-$vector = [0.1, 0.2, 0.3, ...];
+Once you have an instance of the IndexApi class, you can use it to perform various operations on your Pinecone indexes. For example, you can list all of your indexes:
 
-$response = $pinecodeClient->insertVector($collectionName, $vectorId, $vector);
-```
-Search for similar vectors
 ```php
-$queryVector = [0.1, 0.2, 0.3, ...];
+$indexes = $pinecone->list();
+```
+You can also create a new index:
+
+```php
+$name = 'my-new-index';
+$dimension = 256;
+
+$response = $pinecone->create($name, $dimension);
+```
+For more information on the available methods and their parameters, please refer to the inline documentation in the IndexApi class.
+
+Usage
+To get started, you will need to create an instance of the VectorApi class:
+
+## Vectors
+
+If you don't know the host
+
+```php
+use Darcher\PineconePhp\VectorApi;
+
+$apiKey = 'your-api-key';
+$environment = 'us-west1-gcp';
+$indexName = 'your-index-name';
+
+$pinecone = VectorApi::build($apiKey, null, $indexName, $environment);
+```
+Once you have an instance of the VectorApi class, you can use it to perform various operations on your Pinecone vectors. For example, you can query vectors by their ID:
+
+```php
+$id = 'your-vector-id';
 $topK = 10;
 
-$response = $pinecodeClient->search($collectionName, $queryVector, $topK);
+$response = $pinecone->queryById($id, $topK);
 ```
-Update a vector
-```php
-$newVector = [0.4, 0.5, 0.6, ...];
+You can also upsert a collection of vectors:
 
-$response = $pinecodeClient->updateVector($collectionName, $vectorId, $newVector);
+```php
+use Darcher\PineconePhp\Vector;
+use Darcher\PineconePhp\VectorCollection;
+
+$vectors = new VectorCollection([
+    new Vector('vector-id-1', [1, 2, 3]),
+    new Vector('vector-id-2', [4, 5, 6]),
+]);
+
+$response = $pinecone->upsertCollection($vectors);
 ```
-Delete a vector
+Or using the factory class
 ```php
-$response = $pinecodeClient->deleteVector($collectionName, $vectorId);
-Delete a collection
-```php
-$response = $pinecodeClient->deleteCollection($collectionName);
+
+use Darcher\PineconePhp\VectorCollectionFactory;
+
+$response = $pinecone->upsertCollection(VectorCollectionFactory::create([
+    ['vector-id-1', [1, 2, 3]],
+    ['vector-id-2', [3, 4, 5]],
+]));
 ```
-## Documentation
-For a more detailed explanation of the available methods and their usage, please refer to the [official documentation](https://github.com/yourusername/php-pinecode-api-client/wiki).
+You can also use the upsert for a single vector
+```php
+use Darcher\PineconePhp\Vector;
 
-## Support
-If you encounter any issues or require further assistance, please submit an issue on our GitHub repository.
+$response = $pinecone->upsertOne(new Vector('vector-id-1', [1, 2, 3]));
+```
 
-## Contributing
-We welcome contributions from the community. If you would like to contribute, please fork the repository, make your changes, and submit a pull request.
 
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+
+For more information on the available methods and their parameters, please refer to the inline documentation in the VectorApi class.
+
+# Contributing
+
+If you would like to contribute to this package, please feel free to open a pull request or an issue on the GitHub repository.
+
+# License
+This package is licensed under the MIT License.
